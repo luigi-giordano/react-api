@@ -71,6 +71,8 @@ const ArticleList = () => {
 
     axios.post("http://localhost:3001/posts", formData)
       .then((res) => {
+        console.log("Articolo inviato con successo :", res.data);
+
         // Aggiorna la lista degli articoli con il nuovo articolo aggiunto
         setArticleList((prevList) => [...prevList, res.data]);
 
