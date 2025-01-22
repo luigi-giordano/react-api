@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-// const categories = ['Hobby', 'Casa', 'Lavoro', 'Studio'];
+const categories = ['Hobby', 'Casa', 'Lavoro', 'Studio'];
 const availableTags = [
   { id: 1, name: 'Tempo libero' },
   { id: 2, name: 'Shopping' },
@@ -22,8 +22,21 @@ const defaultArticleData = {
 const ArticleList = () => {
   const [articleList, setArticleList] = useState([
     {
-
-    }
+      title: 'Acquisti in fumetteria',
+      content: 'Comprare manga e fumetti preferiti.',
+      category: 'Hobby',
+      tags: ['Tempo libero', 'Shopping'],
+      image: '',
+      published: true,
+    },
+    {
+      title: 'Fare la spesa',
+      content: 'Lista di alimenti e prodotti da comprare.',
+      category: 'Casa',
+      tags: ['Cibo', 'Casa'],
+      image: '',
+      published: false,
+    },
   ]);
 
   const [formData, setFormData] = useState(defaultArticleData);
