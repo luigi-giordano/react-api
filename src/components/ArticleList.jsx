@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios'
 
-const categories = ['Hobby', 'Casa', 'Lavoro', 'Studio'];
+// const categories = ['Hobby', 'Casa', 'Lavoro', 'Studio'];
+
 const availableTags = [
   { id: 1, name: 'Tempo libero' },
   { id: 2, name: 'Shopping' },
@@ -13,33 +15,31 @@ const availableTags = [
 const defaultArticleData = {
   title: '',
   content: '',
-  category: '',
+  // category: '',
   tags: [],
   image: '',
   published: false,
 };
 
 const ArticleList = () => {
-  const [articleList, setArticleList] = useState([
-    {
-      title: 'Acquisti in fumetteria',
-      content: 'Comprare manga e fumetti preferiti.',
-      category: 'Hobby',
-      tags: ['Tempo libero', 'Shopping'],
-      image: '',
-      published: true,
-    },
-    {
-      title: 'Fare la spesa',
-      content: 'Lista di alimenti e prodotti da comprare.',
-      category: 'Casa',
-      tags: ['Cibo', 'Casa'],
-      image: '',
-      published: false,
-    },
-  ]);
+  const [articleList, setArticleList] = useState([]);
 
+  //chiamare l'api e aggiornare 
+  const fetchArticles = () => {
+    axios.get('http://localhost:3001/posts/')
+      .then(res => {
+        setArticleList(res.data);
+      })
+      .catch(err => {
+        console.error('Errore durante il recupero degli articoli:', err);
+      });
+  }
   const [formData, setFormData] = useState(defaultArticleData);
+
+  useEffect(() => {
+    fetchArticles()
+  }, [])
+
 
   useEffect(() => {
     if (formData.published) {
@@ -57,17 +57,29 @@ const ArticleList = () => {
 
   const handleTagChange = (tagName) => {
     setFormData((prevArticle) => {
-      const updatedTags = prev.tags.includes(tagName)
+      const updatedTags = prevArticle.tags.includes(tagName)
         ? prevArticle.tags.filter((tag) => tag !== tagName)
         : [...prevArticle.tags, tagName];
       return { ...prevArticle, tags: updatedTags };
     });
   };
 
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    setArticleList((prevList) => [...prevList, formData]);
-    setFormData(defaultArticleData);
+
+    axios.post("http://localhost:3001/posts", formData)
+      .then((res) => {
+        // Aggiorna la lista degli articoli con il nuovo articolo aggiunto
+        setArticleList((prevList) => [...prevList, res.data]);
+
+        // Resetta il form dopo l'invio
+        setFormData(defaultArticleData);
+      })
+      .catch((err) => {
+        console.error("Errore durante l'invio dell'articolo :", err);
+      });
   };
 
   const handleRemoveArticle = (index) => {
@@ -102,23 +114,6 @@ const ArticleList = () => {
             onChange={handleInputChange}
             placeholder="Inserisci il contenuto"
           ></textarea>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Categoria</label>
-          <select
-            name="category"
-            className="form-select"
-            value={formData.category}
-            onChange={handleInputChange}
-          >
-            <option value="">Seleziona una categoria</option>
-            {categories.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div className="mb-3">
@@ -171,6 +166,25 @@ const ArticleList = () => {
           Aggiungi
         </button>
       </form>
+
+
+      {/* <div className="mb-3">
+          <label className="form-label">Categoria</label>
+          <select
+            name="category"
+            className="form-select"
+            value={formData.category}
+            onChange={handleInputChange}
+          >
+            <option value="">Seleziona una categoria</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div> */}
+
 
       <ul className="list-group mt-4">
         {articleList.map((article, index) => (
