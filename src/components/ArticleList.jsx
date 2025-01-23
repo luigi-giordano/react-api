@@ -74,7 +74,7 @@ const ArticleList = () => {
         console.log("Articolo inviato con successo :", res.data);
 
         // Aggiorna la lista degli articoli con il nuovo articolo aggiunto
-        setArticleList((prevList) => [...prevList, res.data]);
+        setArticleList(res.data);
 
         // Resetta il form dopo l'invio
         setFormData(defaultArticleData);
@@ -83,6 +83,12 @@ const ArticleList = () => {
         console.error("Errore durante l'invio dell'articolo :", err);
       });
   };
+
+  // useEffect(() => {
+  //   console.log(articleList.map((article, index) => article.title));
+
+  //   console.log(articleList)
+  // }, [articleList]);
 
   const handleRemoveArticle = (index) => {
     setArticleList((prevList) => prevList.filter((_, i) => i !== index));
@@ -195,6 +201,7 @@ const ArticleList = () => {
             className="list-group-item d-flex justify-content-between align-items-center"
           >
             <span>{article.title}</span>
+            <img src={`http://localhost:3001${article.image}`} alt="Immagine" />
             <i
               className="fa-solid fa-trash pointer"
               onClick={() => handleRemoveArticle(index)}
